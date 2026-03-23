@@ -68,28 +68,22 @@ export default function QAChat({ summaryId, initialMessages }: Props) {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <h3 className="font-[family-name:var(--font-heading)] text-lg font-semibold mb-4">
-        Ask Questions
-      </h3>
+    <div className="flex flex-col">
+      <h3 className="font-display text-lg font-semibold mb-4">Ask Questions</h3>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-3 mb-4 max-h-96 pr-2">
+      <div className="flex-1 overflow-y-auto space-y-3 mb-4 max-h-96 pr-1">
         {messages.length === 0 && (
-          <p className="text-text-dim text-sm text-center py-8">
+          <p className="text-dim text-sm text-center py-8">
             Ask anything about this document...
           </p>
         )}
         {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
+          <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+              className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                 msg.role === 'user'
-                  ? 'bg-accent text-bg rounded-br-md'
-                  : 'bg-bg-lighter border border-border rounded-bl-md text-text-secondary'
+                  ? 'bg-teal text-dark rounded-br-sm'
+                  : 'bg-dark-3 border border-line rounded-bl-sm text-mid'
               }`}
             >
               {msg.content}
@@ -98,11 +92,11 @@ export default function QAChat({ summaryId, initialMessages }: Props) {
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-bg-lighter border border-border rounded-2xl rounded-bl-md px-4 py-3">
+            <div className="bg-dark-3 border border-line rounded-2xl rounded-bl-sm px-4 py-3">
               <div className="flex gap-1.5">
-                <span className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <span className="w-2 h-2 bg-teal rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 bg-teal rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 bg-teal rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             </div>
           </div>
@@ -110,20 +104,19 @@ export default function QAChat({ summaryId, initialMessages }: Props) {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question about this document..."
-          className="flex-1 bg-bg-lighter border border-border rounded-xl px-4 py-2.5 text-sm text-text placeholder:text-text-dim focus:outline-none focus:border-accent transition-colors"
+          placeholder="Ask a question..."
+          className="flex-1 min-w-0 bg-dark-3 border border-line rounded-xl px-4 py-2.5 text-sm text-light placeholder:text-dim focus:outline-none focus:border-teal transition-colors"
           disabled={loading}
         />
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="bg-accent text-bg px-5 py-2.5 rounded-xl font-medium text-sm hover:shadow-[0_0_20px_var(--color-accent-glow)] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          className="bg-teal text-dark px-4 py-2.5 rounded-xl font-semibold text-sm whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Ask
         </button>

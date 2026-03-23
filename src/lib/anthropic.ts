@@ -22,7 +22,7 @@ export async function generateSummary(text: string): Promise<{
 2. A comprehensive summary (2-4 paragraphs)
 3. 5-8 key takeaways as bullet points
 
-Respond in this exact JSON format:
+Respond in this exact JSON format and nothing else:
 {
   "title": "...",
   "summary": "...",
@@ -54,15 +54,11 @@ export async function askQuestion(
   const messages: Anthropic.MessageParam[] = [
     {
       role: 'user',
-      content: `You are answering questions about this document. Be helpful, accurate, and concise. If the answer isn't in the document, say so.
-
-Document:
-${trimmedDoc}`,
+      content: `You are answering questions about this document. Be helpful, accurate, and concise. If the answer isn't in the document, say so.\n\nDocument:\n${trimmedDoc}`,
     },
     {
       role: 'assistant',
-      content:
-        "I've read the document. I'm ready to answer your questions about it.",
+      content: "I've read the document. I'm ready to answer your questions about it.",
     },
     ...history.map((msg) => ({
       role: msg.role as 'user' | 'assistant',

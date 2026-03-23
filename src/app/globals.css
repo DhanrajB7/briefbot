@@ -1,28 +1,21 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-bg: #0a0a0a;
-  --color-bg-light: #111111;
-  --color-bg-lighter: #1a1a1a;
-  --color-surface: rgba(255, 255, 255, 0.03);
-  --color-surface-hover: rgba(255, 255, 255, 0.06);
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-hover: rgba(255, 255, 255, 0.15);
-  --color-text: #f0f0f0;
-  --color-text-secondary: #888888;
-  --color-text-dim: #555555;
-  --color-accent: #64ffda;
-  --color-accent-2: #a78bfa;
-  --color-accent-glow: rgba(100, 255, 218, 0.15);
-  --font-heading: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --color-dark: #0a0a0a;
+  --color-dark-2: #111111;
+  --color-dark-3: #1a1a1a;
+  --color-panel: #0f0f0f;
+  --color-line: #222222;
+  --color-line-2: #333333;
+  --color-light: #f0f0f0;
+  --color-mid: #888888;
+  --color-dim: #555555;
+  --color-teal: #64ffda;
+  --color-purple: #a78bfa;
+  --color-glow: #64ffda33;
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
@@ -31,30 +24,30 @@ html {
 }
 
 body {
-  font-family: var(--font-body);
-  background: var(--color-bg);
-  color: var(--color-text);
-  line-height: 1.6;
+  font-family: var(--font-sans);
+  background: var(--color-dark);
+  color: var(--color-light);
 }
 
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-bg);
+  background: var(--color-teal);
+  color: var(--color-dark);
 }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--color-bg); }
-::-webkit-scrollbar-thumb { background: var(--color-text-dim); border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--color-dark); }
+::-webkit-scrollbar-thumb { background: var(--color-dim); border-radius: 3px; }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+.font-display { font-family: var(--font-display); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--color-border);
-  border-top-color: var(--color-accent);
+  border: 2px solid var(--color-line);
+  border-top-color: var(--color-teal);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
+  display: inline-block;
 }

@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase-server';
+import { supabase } from '@/lib/supabase-admin';
 import { generateSummary } from '@/lib/anthropic';
-import { extractTextFromPDF } from '@/lib/pdf-parser';
 import { extractTextFromURL } from '@/lib/url-scraper';
 import { nanoid } from 'nanoid';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown';
+    const { allowed, remaining } = checkRateLimit(ip, 'summarize');
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. You can summarize up to 10 documents per hour.' },
+        { status: 429, headers: { 'X-RateLimit-Remaining': String(remaining) } }
+      );
     }
 
     const formData = await request.formData();
@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
 
     if (sourceType === 'pdf' && file) {
       const buffer = Buffer.from(await file.arrayBuffer());
+      const { extractTextFromPDF } = await import('@/lib/pdf-parser');
       documentText = await extractTextFromPDF(buffer);
     } else if (sourceType === 'url' && url) {
       documentText = await extractTextFromURL(url);
@@ -53,7 +54,6 @@ export async function POST(request: NextRequest) {
     const { data: summary, error } = await supabase
       .from('summaries')
       .insert({
-        user_id: user.id,
         title: result.title,
         source_type: sourceType,
         source_url: sourceUrl,
@@ -72,9 +72,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ summary });
   } catch (err) {
-    console.error('Summarize error:', err);
+    const message = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error ? err.stack : '';
+    console.error('Summarize error:', message);
+    console.error('Stack:', stack);
     return NextResponse.json(
-      { error: 'Failed to generate summary. Please try again.' },
+      { error: `Error: ${message}` },
       { status: 500 }
     );
   }

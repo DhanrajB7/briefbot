@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase-server';
+import { supabase } from '@/lib/supabase-admin';
 import { askQuestion } from '@/lib/anthropic';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown';
+    const { allowed } = checkRateLimit(ip, 'qa');
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. You can ask up to 30 questions per hour.' },
+        { status: 429 }
+      );
     }
 
     const { summaryId, question } = await request.json();
 
-    // Fetch the summary and its original text
     const { data: summary, error: summaryError } = await supabase
       .from('summaries')
       .select('original_text')
@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Summary not found' }, { status: 404 });
     }
 
-    // Fetch conversation history
     const { data: history } = await supabase
       .from('qa_messages')
       .select('role, content')
@@ -40,7 +39,6 @@ export async function POST(request: NextRequest) {
       (history || []) as { role: 'user' | 'assistant'; content: string }[]
     );
 
-    // Save both messages to the database
     await supabase.from('qa_messages').insert([
       { summary_id: summaryId, role: 'user', content: question },
       { summary_id: summaryId, role: 'assistant', content: answer },

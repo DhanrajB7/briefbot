@@ -3,13 +3,13 @@ import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
 const spaceGrotesk = Space_Grotesk({
-  variable: '--font-heading',
+  variable: '--font-display',
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
 });
 
 const inter = Inter({
-  variable: '--font-body',
+  variable: '--font-sans',
   subsets: ['latin'],
   weight: ['300', '400', '500', '600'],
 });
@@ -34,9 +34,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-bg text-text">
+      <body className="min-h-screen flex flex-col bg-dark text-light">
         {children}
       </body>
     </html>
