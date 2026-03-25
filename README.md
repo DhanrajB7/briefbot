@@ -26,7 +26,7 @@ BriefBot is a full-stack AI-powered document summarization tool. Upload a PDF, p
 | **Language** | TypeScript | Type safety across the full stack — caught multiple bugs at compile time that would have been runtime errors in plain JS. |
 | **Styling** | Tailwind CSS v4 | Utility-first CSS with the new v4 theme system. Custom design tokens (`@theme inline`) for a consistent dark UI without writing a single CSS file beyond globals. |
 | **Database** | Supabase (PostgreSQL) | Managed Postgres with a generous free tier. Row Level Security policies, real-time capabilities, and a great SDK. Stores summaries, Q&A history, and share metadata. |
-| **AI** | Anthropic Claude API | Claude Sonnet for summarization and conversational Q&A. Structured JSON output for reliable parsing. Conversation history passed as context for multi-turn Q&A. |
+| **AI** | LLM API | Large language model for summarization and conversational Q&A. Structured JSON output for reliable parsing. Conversation history passed as context for multi-turn Q&A. |
 | **PDF Parsing** | unpdf | Server-side PDF text extraction that works in Node.js/Edge environments without DOM dependencies — critical for serverless deployment. |
 | **URL Scraping** | Cheerio | Lightweight HTML parsing to extract article content from URLs. Prioritizes semantic selectors (`<article>`, `<main>`, `[role="main"]`) before falling back to `<body>`. |
 | **Deployment** | Vercel | Zero-config Next.js deployment with edge functions, automatic HTTPS, and global CDN. |
@@ -53,7 +53,7 @@ src/
 │   ├── QAChat.tsx                  # Real-time chat interface (Client Component)
 │   └── ShareButton.tsx             # Copy-to-clipboard share (Client Component)
 ├── lib/
-│   ├── anthropic.ts                # Claude API: summarization + Q&A functions
+│   ├── anthropic.ts                # LLM API: summarization + Q&A functions
 │   ├── pdf-parser.ts               # PDF → text extraction
 │   ├── url-scraper.ts              # URL → text extraction with Cheerio
 │   ├── supabase-admin.ts           # Supabase client (server-side)
@@ -146,7 +146,7 @@ qa_messages (
 | **PDF parsing in serverless** | `pdf-parse` threw `DOMMatrix is not defined` on Vercel because it depends on browser APIs | Replaced with `unpdf` — a pure-JS PDF parser designed for server environments |
 | **Tailwind v4 theme tokens** | Custom color names with `rgba()` values weren't generating proper utility classes | Switched to hex values and simplified token names for reliable class generation |
 | **Server/Client boundary** | Passing `onClick` handlers from a Server Component to a `<button>` caused a runtime error | Extracted interactive elements into dedicated Client Components (`ShareButton.tsx`) |
-| **AI response parsing** | Claude occasionally wraps JSON in markdown code fences | Used regex extraction (`/\{[\s\S]*\}/`) to reliably parse JSON regardless of wrapping |
+| **AI response parsing** | LLM occasionally wraps JSON in markdown code fences | Used regex extraction (`/\{[\s\S]*\}/`) to reliably parse JSON regardless of wrapping |
 | **URL scraping reliability** | Many sites don't use semantic HTML — `<article>` or `<main>` tags are missing | Built a cascading selector strategy with 6 priority levels before falling back to `<body>` |
 | **Rate limiting on serverless** | Serverless functions are stateless — traditional in-memory stores reset on cold starts | Accepted this tradeoff for simplicity; the rate limiter resets on redeploy but still protects against sustained abuse within a session |
 
@@ -188,6 +188,6 @@ npm run dev
 
 ## Built With
 
-Next.js 14 &bull; TypeScript &bull; Tailwind CSS v4 &bull; Supabase &bull; Anthropic Claude API &bull; Vercel
+Next.js 14 &bull; TypeScript &bull; Tailwind CSS v4 &bull; Supabase &bull; LLM API &bull; Vercel
 
 Built by [Dhanraj Bhalala](https://github.com/DhanrajB7)
